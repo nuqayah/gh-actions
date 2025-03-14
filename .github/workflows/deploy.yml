@@ -78,7 +78,11 @@ jobs:
       - name: Deploy frontend
         if: inputs.frontend_dist_path != ''
         run: |
-          scp -C -r ${{ inputs.frontend_dist_path }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/srv/apps/${{ inputs.app_name }}/${{ inputs.frontend_target_path }}
+          TARGET_PATH="/srv/apps/${{ inputs.app_name }}"
+          if [ "${{ inputs.deploy_backend }}" == "true" ]; then
+            TARGET_PATH="$TARGET_PATH/${{ inputs.frontend_target_path }}"
+          fi
+          scp -C -r ${{ inputs.frontend_dist_path }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:$TARGET_PATH
 
       - name: Restart service
         if: inputs.deploy_backend
