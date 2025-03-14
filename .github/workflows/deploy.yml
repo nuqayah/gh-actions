@@ -11,6 +11,11 @@ on:
         required: false
         type: string
         description: "Service name to restart (defaults to app_name)"
+      deploy_backend:
+        required: false
+        type: boolean
+        default: false
+        description: "Whether to deploy the backend"
       backend_setup_command:
         required: false
         type: string
@@ -24,7 +29,7 @@ on:
       frontend_target_path:
         required: false
         type: string
-        default: "client"
+        default: "src"
         description: "Target path for frontend files on server"
     secrets:
       SSH_PRIVATE_KEY:
@@ -62,6 +67,7 @@ jobs:
           ssh-keyscan ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy backend
+        if: inputs.deploy_backend
         run: |
           git archive HEAD | ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             cd /srv/apps/${{ inputs.app_name }}/
@@ -75,5 +81,6 @@ jobs:
           scp -C -r ${{ inputs.frontend_dist_path }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/srv/apps/${{ inputs.app_name }}/${{ inputs.frontend_target_path }}
 
       - name: Restart service
+        if: inputs.deploy_backend
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'sudo service ${{ inputs.service_name || inputs.app_name }} restart'
