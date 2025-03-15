@@ -84,6 +84,10 @@ jobs:
           fi
           scp -C -r ${{ inputs.frontend_dist_path }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:$TARGET_PATH
 
+          if [ -f "dist/sw.js" ]; then
+            scp -C "dist/sw.js" ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:$TARGET_PATH
+          fi
+
       - name: Restart service
         if: inputs.deploy_backend
         run: |
