@@ -1,0 +1,41 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    secrets:
+      SSH_PRIVATE_KEY:
+        required: true
+      DEPLOY_HOST:
+        required: true
+      DEPLOY_USER:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+
+      - uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: mise run deploy
