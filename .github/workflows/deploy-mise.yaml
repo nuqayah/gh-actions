@@ -52,7 +52,7 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
         run: mise run deploy
-      
+
       - name: Minimize uv cache
         if: hashFiles('uv.lock') != '' && success()
         run: command -v uv &>/dev/null && uv cache prune --ci || true
