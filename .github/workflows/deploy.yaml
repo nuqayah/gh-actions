@@ -16,6 +16,8 @@ jobs:
     env:
       # Configure a constant location for the uv cache
       UV_CACHE_DIR: /tmp/.uv-cache
+    concurrency:
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - name: pnpm cache
