@@ -17,6 +17,7 @@ jobs:
       # Configure a constant location for the uv cache
       UV_CACHE_DIR: /tmp/.uv-cache
     concurrency:
+      group: ${{ github.ref }}
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
