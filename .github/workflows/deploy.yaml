@@ -54,6 +54,7 @@ jobs:
       - name: Deploy
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mise run deploy
 
       - name: Minimize uv cache
