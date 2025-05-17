@@ -1,4 +1,4 @@
-name: Reusable Deploy Workflow
+name: Reusable Mise Deploy Workflow
 
 on:
   workflow_call:
@@ -55,7 +55,9 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mise run deploy
+        run: |
+          perl -i -pe 's/(python.uv_venv_auto =) true/$1 false/' mise.toml
+          mise run deploy
 
       - name: Minimize uv cache
         if: hashFiles('uv.lock') != '' && success()
