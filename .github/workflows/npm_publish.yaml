@@ -1,0 +1,43 @@
+name: Reusable PNPM Publish Workflow
+
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+    permissions: 
+      contents: read
+      packages: write 
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+
+      - name: Setup .npmrc
+        run: echo "@${{ github.repository_owner }}:registry=https://npm.pkg.github.com" > ~/.npmrc && echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build package
+        run: pnpm run build
+
+      - name: Publish package to GitHub Packages
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
