@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    uses: nuqayah/gh-actions/.github/workflows/deploy-mise.yaml@main
+    uses: nuqayah/gh-actions/.github/workflows/deploy.yaml@main
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
