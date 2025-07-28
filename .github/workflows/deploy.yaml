@@ -69,7 +69,7 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_OPTIONS: "--max_old_space_size=4096"
+          NODE_OPTIONS: "--max_old_space_size=1408"
         run: |
           perl -i -pe 's/(python.uv_venv_auto =) true/$1 false/' mise.toml
           mise run deploy
