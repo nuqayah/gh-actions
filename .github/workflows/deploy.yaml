@@ -28,9 +28,9 @@ jobs:
       group: ${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: pnpm cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.pnpm-store
@@ -39,7 +39,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - name: uv cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         if: hashFiles('uv.lock') != ''
         with:
           path: /tmp/.uv-cache
@@ -52,7 +52,7 @@ jobs:
       #     experimental: true
       #     cache: false
 
-      - uses: webfactory/ssh-agent@v0.7.0
+      - uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
