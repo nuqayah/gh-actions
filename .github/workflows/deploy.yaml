@@ -59,6 +59,9 @@ jobs:
       - run: |
           mkdir -p ~/.ssh
           ssh-keyscan ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          if [ -n "${{ secrets.DEPLOY_HOST_PROD }}" ]; then
+            ssh-keyscan ${{ secrets.DEPLOY_HOST_PROD }} >> ~/.ssh/known_hosts
+          fi
 
       - name: Setup .npmrc for GitHub Packages
         run: |
@@ -69,6 +72,7 @@ jobs:
       - name: Deploy
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          DEPLOY_HOST_PROD: ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_OPTIONS: "--max_old_space_size=8192"
         run: |
